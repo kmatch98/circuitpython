@@ -274,6 +274,258 @@ STATIC mp_obj_t displayio_bitmap_obj_blit(size_t n_args, const mp_obj_t *pos_arg
 MP_DEFINE_CONST_FUN_OBJ_KW(displayio_bitmap_blit_obj, 4, displayio_bitmap_obj_blit);
 // `displayio_bitmap_obj_blit` requires at least 4 arguments
 
+
+
+
+/////////  Adding a fancy blit function with rotation, scaling and clipping (both source and destination)
+STATIC mp_obj_t displayio_bitmap_obj_blitfancy(size_t n_args, const mp_obj_t *pos_args, mp_map_t *kw_args){
+    enum {ARG_ox, ARG_oy, ARG_dest_clip0, ARG_dest_clip1,
+        ARG_source, ARG_px, ARG_py,
+        ARG_source_clip0, ARG_source_clip1,
+        ARG_angle, ARG_scale, ARG_skip_index};
+
+    static const mp_arg_t allowed_args[] = {
+        {MP_QSTR_ox, MP_ARG_KW_ONLY | MP_ARG_OBJ, {.u_obj = mp_const_none} }, // None convert to destination->width  / 2
+        {MP_QSTR_oy, MP_ARG_KW_ONLY | MP_ARG_OBJ, {.u_obj = mp_const_none} }, // None convert to destination->height / 2
+
+        {MP_QSTR_dest_clip0, MP_ARG_KW_ONLY | MP_ARG_OBJ, {.u_obj = mp_const_none} },
+        {MP_QSTR_dest_clip1, MP_ARG_KW_ONLY | MP_ARG_OBJ, {.u_obj = mp_const_none} },
+        //{MP_QSTR_dest_clip0_x, MP_ARG_KW_ONLY | MP_ARG_INT, {.u_int = 0} },
+        //{MP_QSTR_dest_clip0_y, MP_ARG_KW_ONLY | MP_ARG_INT, {.u_int = 0} },
+        //{MP_QSTR_dest_clip1_x, MP_ARG_KW_ONLY | MP_ARG_OBJ, {.u_obj = mp_const_none} }, // None convert to destination->width
+        //{MP_QSTR_dest_clip1_y, MP_ARG_KW_ONLY | MP_ARG_OBJ, {.u_obj = mp_const_none} }, // None convert to destination->height
+
+        {MP_QSTR_source, MP_ARG_REQUIRED | MP_ARG_OBJ},
+        {MP_QSTR_px, MP_ARG_KW_ONLY | MP_ARG_OBJ, {.u_obj = mp_const_none} }, // None convert to source->width  / 2
+        {MP_QSTR_py, MP_ARG_KW_ONLY | MP_ARG_OBJ, {.u_obj = mp_const_none} }, // None convert to source->height / 2
+
+        {MP_QSTR_source_clip0, MP_ARG_KW_ONLY | MP_ARG_OBJ, {.u_obj = mp_const_none} },
+        {MP_QSTR_source_clip1, MP_ARG_KW_ONLY | MP_ARG_OBJ, {.u_obj = mp_const_none} },
+        //{MP_QSTR_source_clip0_x, MP_ARG_KW_ONLY | MP_ARG_INT, {.u_int = 0} },
+        //{MP_QSTR_source_clip0_y, MP_ARG_KW_ONLY | MP_ARG_INT, {.u_int = 0} },
+        //{MP_QSTR_source_clip1_x, MP_ARG_KW_ONLY | MP_ARG_OBJ, {.u_obj = mp_const_none} }, // None convert to source->width
+        //{MP_QSTR_source_clip1_y, MP_ARG_KW_ONLY | MP_ARG_OBJ, {.u_obj = mp_const_none} }, // None convert to source->height
+        {MP_QSTR_angle, MP_ARG_KW_ONLY | MP_ARG_OBJ, {.u_obj = mp_const_none} }, // None convert to 0.0
+        {MP_QSTR_scale, MP_ARG_KW_ONLY | MP_ARG_OBJ, {.u_obj = mp_const_none} }, // None convert to 1.0
+        {MP_QSTR_skip_index, MP_ARG_OBJ | MP_ARG_KW_ONLY, {.u_obj=mp_const_none} },
+    };
+
+    mp_arg_val_t args[MP_ARRAY_SIZE(allowed_args)];
+    mp_arg_parse_all(n_args - 1, pos_args + 1, kw_args, MP_ARRAY_SIZE(allowed_args), allowed_args, args);
+
+    displayio_bitmap_t *self = MP_OBJ_TO_PTR(pos_args[0]); // destination bitmap
+
+    displayio_bitmap_t *source = MP_OBJ_TO_PTR(args[ARG_source].u_obj);
+
+    // ensure that the target bitmap (self) has at least as many `bits_per_value` as the source
+    if (self->bits_per_value < source->bits_per_value) {
+        mp_raise_ValueError(translate("source palette too large"));
+    }
+
+    // Check input validity and convert any None values
+    // If clip inputs are None, then use bitmap->width and bitmap->height.
+    // Ensure _clip0_x < _clip1_x, etc.
+    // If either clipping region is zero width, then do nothing.
+    // if skip_index input is None, then set skip_index_none = True
+    // if angle is None, set to 0.0
+    // if scale is None, set to 1.0
+
+    // Confirm the destination location target (ox,oy)
+    int16_t ox, oy;
+    if ( args[ARG_ox].u_obj == mp_const_none ) {
+        ox = self->width / 2;
+    } else {
+        ox = mp_obj_get_int(args[ARG_ox].u_obj);
+    }
+    if ( args[ARG_oy].u_obj == mp_const_none ) {
+        oy = self->height / 2;
+    } else {
+        oy = mp_obj_get_int(args[ARG_oy].u_obj);
+    }
+
+    // Extract x,y from the destination (self) clip0 tuple
+    int16_t dest_clip0_x, dest_clip0_y;
+    if ( args[ARG_dest_clip0].u_obj == mp_const_none ){
+        dest_clip0_x = 0;
+        dest_clip0_y = 0;
+    } else if ( !MP_OBJ_IS_OBJ(args[ARG_dest_clip0].u_obj) ){
+        mp_raise_ValueError(translate("clip point must be (x,y) tuple"));
+    } else {
+        mp_obj_t* items;
+        mp_obj_get_array_fixed_n(args[ARG_dest_clip0].u_obj, 2, &items);
+        dest_clip0_x = mp_obj_get_int(items[0]);
+        dest_clip0_y = mp_obj_get_int(items[1]);
+    }
+
+    // Extract x,y from the destination (self) clip1 tuple
+    int16_t dest_clip1_x, dest_clip1_y;
+    if ( args[ARG_dest_clip1].u_obj == mp_const_none ){
+        dest_clip1_x = self->width;
+        dest_clip1_y = self->height;
+    } else if ( !MP_OBJ_IS_OBJ(args[ARG_dest_clip1].u_obj) ){
+        mp_raise_ValueError(translate("clip point must be (x,y) tuple"));
+    } else {
+        mp_obj_t* items;
+        mp_obj_get_array_fixed_n(args[ARG_dest_clip1].u_obj, 2, &items);
+        dest_clip1_x = mp_obj_get_int(items[0]);
+        dest_clip1_y = mp_obj_get_int(items[1]);
+    }
+
+    // Ensure the value for clip0 is less than clip1 (for x and y)
+    if ( dest_clip0_x > dest_clip1_x ) {
+        int16_t temp_value = dest_clip0_x;
+        dest_clip0_x = dest_clip1_x;
+        dest_clip1_x = temp_value;
+    }
+    if ( dest_clip0_y > dest_clip1_y ) {
+        int16_t temp_value = dest_clip0_y;
+        dest_clip0_y = dest_clip1_y;
+        dest_clip1_y = temp_value;
+    }
+
+    // Constrain the destination clip window to within the destination bitmap size
+    if (dest_clip0_x < 0) {
+        dest_clip0_x = 0;
+    }
+    if (dest_clip0_y < 0) {
+        dest_clip0_y = 0;
+    }
+    if (dest_clip0_x > self->width) {
+        dest_clip0_x = self->width;
+    }
+    if (dest_clip0_y > self->height) {
+        dest_clip0_y = self->height;
+    }
+    if (dest_clip1_x < 0) {
+        dest_clip1_x = 0;
+    }
+    if (dest_clip1_y < 0) {
+        dest_clip1_y = 0;
+    }
+    if (dest_clip1_x > self->width) {
+        dest_clip1_x = self->width;
+    }
+    if (dest_clip1_y > self->height) {
+        dest_clip1_y = self->height;
+    }
+
+    // Confirm the source location target (px,py)
+    int16_t px, py;
+    if ( args[ARG_ox].u_obj == mp_const_none ) {
+        px = source->width / 2;
+    } else {
+        px = mp_obj_get_int(args[ARG_px].u_obj);
+    }
+    if ( args[ARG_oy].u_obj == mp_const_none ) {
+        py = source->height / 2;
+    } else {
+        py = mp_obj_get_int(args[ARG_py].u_obj);
+    }
+
+    // Extract x,y from the source clip0 tuple
+    int16_t source_clip0_x, source_clip0_y;
+    if ( args[ARG_source_clip0].u_obj == mp_const_none ){
+        source_clip0_x = 0;
+        source_clip0_y = 0;
+    } else if ( !MP_OBJ_IS_OBJ(args[ARG_source_clip0].u_obj) ){
+        mp_raise_ValueError(translate("clip point must be (x,y) tuple"));
+    } else {
+        mp_obj_t* items;
+        mp_obj_get_array_fixed_n(args[ARG_source_clip0].u_obj, 2, &items);
+        source_clip0_x = mp_obj_get_int(items[0]);
+        source_clip0_y = mp_obj_get_int(items[1]);
+    }
+
+    // Extract x,y from the source clip1 tuple
+    int16_t source_clip1_x, source_clip1_y;
+    if ( args[ARG_source_clip1].u_obj == mp_const_none ){
+        source_clip1_x = self->width;
+        source_clip1_y = self->height;
+    } else if ( !MP_OBJ_IS_OBJ(args[ARG_source_clip1].u_obj) ){
+        mp_raise_ValueError(translate("clip point must be (x,y) tuple"));
+    } else {
+        mp_obj_t* items;
+        mp_obj_get_array_fixed_n(args[ARG_source_clip1].u_obj, 2, &items);
+        source_clip1_x = mp_obj_get_int(items[0]);
+        source_clip1_y = mp_obj_get_int(items[1]);
+    }
+
+    // Ensure the value for clip0 is less than clip1 (for x and y)
+    if ( source_clip0_x > source_clip1_x ) {
+        int16_t temp_value = source_clip0_x;
+        source_clip0_x = source_clip1_x;
+        source_clip1_x = temp_value;
+    }
+    if ( source_clip0_y > source_clip1_y ) {
+        int16_t temp_value = source_clip0_y;
+        source_clip0_y = source_clip1_y;
+        source_clip1_y = temp_value;
+    }
+
+    // Constrain the source clip window to within the source bitmap size
+    if (source_clip0_x < 0) {
+        source_clip0_x = 0;
+    }
+    if (source_clip0_y < 0) {
+        source_clip0_y = 0;
+    }
+    if (source_clip0_x > source->width) {
+        source_clip0_x = source->width;
+    }
+    if (source_clip0_y > source->height) {
+        source_clip0_y = source->height;
+    }
+    if (source_clip1_x < 0) {
+        source_clip1_x = 0;
+    }
+    if (source_clip1_y < 0) {
+        source_clip1_y = 0;
+    }
+    if (source_clip1_x > source->width) {
+        source_clip1_x = source->width;
+    }
+    if (source_clip1_y > source->height) {
+        source_clip1_y = source->height;
+    }
+
+    // Confirm the angle value
+    float angle=0.0;
+    if ( args[ARG_angle].u_obj != mp_const_none ) {
+        angle = mp_obj_get_float(args[ARG_angle].u_obj);
+    }
+
+    // Confirm the scale value
+    float scale=1.0;
+    if ( args[ARG_scale].u_obj != mp_const_none ) {
+        scale = mp_obj_get_float(args[ARG_scale].u_obj);
+    }
+
+    uint32_t skip_index;
+    bool skip_index_none; // Flag whether skip_value was None
+    if (args[ARG_skip_index].u_obj == mp_const_none ) {
+        skip_index = 0;
+        skip_index_none = true;
+    } else {
+        skip_index = mp_obj_get_int(args[ARG_skip_index].u_obj);
+        skip_index_none = false;
+    }
+
+    common_hal_displayio_bitmap_blitfancy(self, ox, oy,
+                                            dest_clip0_x, dest_clip0_y,
+                                            dest_clip1_x, dest_clip1_y,
+                                            source, px, py,
+                                            source_clip0_x, source_clip0_y,
+                                            source_clip1_x, source_clip1_y,
+                                            angle,
+                                            scale,
+                                            skip_index, skip_index_none);
+
+    return mp_const_none;
+}
+
+MP_DEFINE_CONST_FUN_OBJ_KW(displayio_bitmap_blitfancy_obj, 1, displayio_bitmap_obj_blitfancy);
+// requires at least 2 arguments (destination and source bitmaps)
+
 //|     def fill(self, value: int) -> None:
 //|         """Fills the bitmap with the supplied palette index value."""
 //|         ...
@@ -295,6 +547,7 @@ STATIC const mp_rom_map_elem_t displayio_bitmap_locals_dict_table[] = {
     { MP_ROM_QSTR(MP_QSTR_height), MP_ROM_PTR(&displayio_bitmap_height_obj) },
     { MP_ROM_QSTR(MP_QSTR_width), MP_ROM_PTR(&displayio_bitmap_width_obj) },
     { MP_ROM_QSTR(MP_QSTR_blit), MP_ROM_PTR(&displayio_bitmap_blit_obj) },
+    { MP_ROM_QSTR(MP_QSTR_blitfancy), MP_ROM_PTR(&displayio_bitmap_blitfancy_obj) },
     { MP_ROM_QSTR(MP_QSTR_fill), MP_ROM_PTR(&displayio_bitmap_fill_obj) },
 
 };
