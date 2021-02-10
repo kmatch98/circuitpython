@@ -276,12 +276,12 @@ MP_DEFINE_CONST_FUN_OBJ_KW(displayio_bitmap_blit_obj, 4, displayio_bitmap_obj_bl
 
 /////////  Adding a fancy blit function with rotation, scaling and clipping (both source and destination)
 //|     def blitfancy(self, ox: int, oy: int,
-//|                       dest_clip0: Tuple(int, int),
-//|                       dest_clip1: Tuple(int, int),
+//|                       dest_clip0: Tuple[int, int],
+//|                       dest_clip1: Tuple[int, int],
 //|                       source_bitmap: Bitmap,
 //|                       px: int, py: int,
-//|                       source_clip0: Tuple(int, int),
-//|                       source_clip1: Tuple(int, int),
+//|                       source_clip0: Tuple[int, int],
+//|                       source_clip1: Tuple[int, int],
 //|                       angle: float,
 //|                       scale: float,
 //|                       skip_index: int) -> None:
@@ -292,18 +292,18 @@ MP_DEFINE_CONST_FUN_OBJ_KW(displayio_bitmap_blit_obj, 4, displayio_bitmap_obj_bl
 //|                       point (px,py) is placed
 //|         :param int oy: Vertical pixel location in destination bitmap where source bitmap
 //|                       point (px,py) is placed
-//|         :param Tuple(int x, int y) dest_clip0: First corner of rectangular destination clipping
+//|         :param Tuple[int x, int y] dest_clip0: First corner of rectangular destination clipping
 //|                       region that constrains region of writing into destination bitmap
-//|         :param Tuple(int x, int y) dest_clip1: second corner of rectangular destination clipping
+//|         :param Tuple[int x, int y] dest_clip1: second corner of rectangular destination clipping
 //|                       region that constrains region of writing into destination bitmap
 //|         :param bitmap source_bitmap: Source bitmap that contains the graphical region to be copied
 //|         :param int px: Horizontal pixel location in source bitmap that is placed into the
 //|                       destination bitmap at (ox,oy)
 //|         :param int py: Vertical pixel location in source bitmap that is placed into the
 //|                       destination bitmap at (ox,oy)
-//|         :param Tuple(int x, int y) source_clip0: First corner of rectangular destination clipping
+//|         :param Tuple[int x, int y] source_clip0: First corner of rectangular destination clipping
 //|                       region that constrains region of writing into destination bitmap
-//|         :param Tuple(int x, int y) source_clip1: second corner of rectangular destination clipping
+//|         :param Tuple[int x, int y] source_clip1: second corner of rectangular destination clipping
 //|                       region that constrains region of writing into destination bitmap
 //|         :param float angle: angle of rotation, in radians (positive is clockwise direction)
 //|         :param float scale: scaling factor
