@@ -153,7 +153,7 @@ void common_hal_displayio_bitmap_blitfancy(displayio_bitmap_t *self, int16_t ox,
     // py:
     // source_clip0: (x,y) is the corner of the clip window on the source bitmap
     // source_clip1: (x,y) is the other of the clip window on the source bitmap
-    // angle: angle of rotation, in rotations, clockwise
+    // angle: angle of rotation in radians, positive is clockwise
     // scale: scale factor
     // skip_index: color index that should be ignored (and not copied over)
     // skip_index_none: if skip_index_none is True, then all color indexes should be copied

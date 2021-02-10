@@ -274,37 +274,61 @@ STATIC mp_obj_t displayio_bitmap_obj_blit(size_t n_args, const mp_obj_t *pos_arg
 MP_DEFINE_CONST_FUN_OBJ_KW(displayio_bitmap_blit_obj, 4, displayio_bitmap_obj_blit);
 // `displayio_bitmap_obj_blit` requires at least 4 arguments
 
-
-
-
 /////////  Adding a fancy blit function with rotation, scaling and clipping (both source and destination)
+//|     def blitfancy(self, ox: int, oy: int,
+//|                       dest_clip0: (x0: int, y0: int),
+//|                       dest_clip1: (x1: int, y1: int),
+//|                       source_bitmap: Bitmap,
+//|                       px: int, py: int,
+//|                       source_clip0: (x0: int, y0: int),
+//|                       source_clip1: (x1: int, y1: int),
+//|                       angle: float,
+//|                       scale: float,
+//|                       skip_index: int) -> None:
+//|         """Inserts the source_bitmap region into the bitmap with rotation (angle), scale
+//|                       and clipping (both on source and destination bitmaps)
+//|
+//|         :param int ox: Horizontal pixel location in destination bitmap where source bitmap
+//|                       point (px,py) is placed
+//|         :param int oy: Vertical pixel location in destination bitmap where source bitmap
+//|                       point (px,py) is placed
+//|         :param tuple(int x, int y) dest_clip0: First corner of rectangular destination clipping
+//|                       region that constrains region of writing into destination bitmap
+//|         :param tuple(int x, int y) dest_clip1: second corner of rectangular destination clipping
+//|                       region that constrains region of writing into destination bitmap
+//|         :param bitmap source_bitmap: Source bitmap that contains the graphical region to be copied
+//|         :param int px: Horizontal pixel location in source bitmap that is placed into the
+//|                       destination bitmap at (ox,oy)
+//|         :param int py: Vertical pixel location in source bitmap that is placed into the
+//|                       destination bitmap at (ox,oy)
+//|         :param tuple(int x, int y) source_clip0: First corner of rectangular destination clipping
+//|                       region that constrains region of writing into destination bitmap
+//|         :param tuple(int x, int y) source_clip1: second corner of rectangular destination clipping
+//|                       region that constrains region of writing into destination bitmap
+//|         :param float angle: angle of rotation, in radians (positive is clockwise direction)
+//|         :param float scale: scaling factor
+//|         :param int skip_index: bitmap palette index in the source that will not be copied,
+//|                                set to None to copy all pixels"""
+//|         ...
+//|
 STATIC mp_obj_t displayio_bitmap_obj_blitfancy(size_t n_args, const mp_obj_t *pos_args, mp_map_t *kw_args){
     enum {ARG_ox, ARG_oy, ARG_dest_clip0, ARG_dest_clip1,
-        ARG_source, ARG_px, ARG_py,
+        ARG_source_bitmap, ARG_px, ARG_py,
         ARG_source_clip0, ARG_source_clip1,
         ARG_angle, ARG_scale, ARG_skip_index};
 
     static const mp_arg_t allowed_args[] = {
         {MP_QSTR_ox, MP_ARG_KW_ONLY | MP_ARG_OBJ, {.u_obj = mp_const_none} }, // None convert to destination->width  / 2
         {MP_QSTR_oy, MP_ARG_KW_ONLY | MP_ARG_OBJ, {.u_obj = mp_const_none} }, // None convert to destination->height / 2
-
         {MP_QSTR_dest_clip0, MP_ARG_KW_ONLY | MP_ARG_OBJ, {.u_obj = mp_const_none} },
         {MP_QSTR_dest_clip1, MP_ARG_KW_ONLY | MP_ARG_OBJ, {.u_obj = mp_const_none} },
-        //{MP_QSTR_dest_clip0_x, MP_ARG_KW_ONLY | MP_ARG_INT, {.u_int = 0} },
-        //{MP_QSTR_dest_clip0_y, MP_ARG_KW_ONLY | MP_ARG_INT, {.u_int = 0} },
-        //{MP_QSTR_dest_clip1_x, MP_ARG_KW_ONLY | MP_ARG_OBJ, {.u_obj = mp_const_none} }, // None convert to destination->width
-        //{MP_QSTR_dest_clip1_y, MP_ARG_KW_ONLY | MP_ARG_OBJ, {.u_obj = mp_const_none} }, // None convert to destination->height
 
-        {MP_QSTR_source, MP_ARG_REQUIRED | MP_ARG_OBJ},
+        {MP_QSTR_source_bitmap, MP_ARG_REQUIRED | MP_ARG_OBJ},
         {MP_QSTR_px, MP_ARG_KW_ONLY | MP_ARG_OBJ, {.u_obj = mp_const_none} }, // None convert to source->width  / 2
         {MP_QSTR_py, MP_ARG_KW_ONLY | MP_ARG_OBJ, {.u_obj = mp_const_none} }, // None convert to source->height / 2
-
         {MP_QSTR_source_clip0, MP_ARG_KW_ONLY | MP_ARG_OBJ, {.u_obj = mp_const_none} },
         {MP_QSTR_source_clip1, MP_ARG_KW_ONLY | MP_ARG_OBJ, {.u_obj = mp_const_none} },
-        //{MP_QSTR_source_clip0_x, MP_ARG_KW_ONLY | MP_ARG_INT, {.u_int = 0} },
-        //{MP_QSTR_source_clip0_y, MP_ARG_KW_ONLY | MP_ARG_INT, {.u_int = 0} },
-        //{MP_QSTR_source_clip1_x, MP_ARG_KW_ONLY | MP_ARG_OBJ, {.u_obj = mp_const_none} }, // None convert to source->width
-        //{MP_QSTR_source_clip1_y, MP_ARG_KW_ONLY | MP_ARG_OBJ, {.u_obj = mp_const_none} }, // None convert to source->height
+
         {MP_QSTR_angle, MP_ARG_KW_ONLY | MP_ARG_OBJ, {.u_obj = mp_const_none} }, // None convert to 0.0
         {MP_QSTR_scale, MP_ARG_KW_ONLY | MP_ARG_OBJ, {.u_obj = mp_const_none} }, // None convert to 1.0
         {MP_QSTR_skip_index, MP_ARG_OBJ | MP_ARG_KW_ONLY, {.u_obj=mp_const_none} },
@@ -313,22 +337,14 @@ STATIC mp_obj_t displayio_bitmap_obj_blitfancy(size_t n_args, const mp_obj_t *po
     mp_arg_val_t args[MP_ARRAY_SIZE(allowed_args)];
     mp_arg_parse_all(n_args - 1, pos_args + 1, kw_args, MP_ARRAY_SIZE(allowed_args), allowed_args, args);
 
-    displayio_bitmap_t *self = MP_OBJ_TO_PTR(pos_args[0]); // destination bitmap
+    displayio_bitmap_t *self = MP_OBJ_TO_PTR(pos_args[0]); // self is the destination bitmap
 
-    displayio_bitmap_t *source = MP_OBJ_TO_PTR(args[ARG_source].u_obj);
+    displayio_bitmap_t *source = MP_OBJ_TO_PTR(args[ARG_source_bitmap].u_obj); // the source bitmap
 
     // ensure that the target bitmap (self) has at least as many `bits_per_value` as the source
     if (self->bits_per_value < source->bits_per_value) {
         mp_raise_ValueError(translate("source palette too large"));
     }
-
-    // Check input validity and convert any None values
-    // If clip inputs are None, then use bitmap->width and bitmap->height.
-    // Ensure _clip0_x < _clip1_x, etc.
-    // If either clipping region is zero width, then do nothing.
-    // if skip_index input is None, then set skip_index_none = True
-    // if angle is None, set to 0.0
-    // if scale is None, set to 1.0
 
     // Confirm the destination location target (ox,oy)
     int16_t ox, oy;
@@ -499,9 +515,12 @@ STATIC mp_obj_t displayio_bitmap_obj_blitfancy(size_t n_args, const mp_obj_t *po
     if ( args[ARG_scale].u_obj != mp_const_none ) {
         scale = mp_obj_get_float(args[ARG_scale].u_obj);
     }
+    if (scale < 0) { // ensure scale >= 0
+        scale = 1.0;
+    }
 
     uint32_t skip_index;
-    bool skip_index_none; // Flag whether skip_value was None
+    bool skip_index_none; // Flag whether input skip_value was None
     if (args[ARG_skip_index].u_obj == mp_const_none ) {
         skip_index = 0;
         skip_index_none = true;
