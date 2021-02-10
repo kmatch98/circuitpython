@@ -166,6 +166,30 @@ void common_hal_displayio_bitmap_blitfancy(displayio_bitmap_t *self, int16_t ox,
     // If skip_value is `None`, then all pixels are copied.
 
 
+    // # Credit from https://github.com/wernsey/bitmap
+    // # MIT License from
+    // #  * Copyright (c) 2017 Werner Stoop <wstoop@gmail.com>
+    // #
+    // # *
+    // # * #### `void bm_rotate_blit(Bitmap *dst, int ox, int oy, Bitmap *src, int px, int py, double angle, double scale);`
+    // # *
+    // # * Rotates a source bitmap `src` around a pivot point `px,py` and blits it onto a destination bitmap `dst`.
+    // # *
+    // # * The bitmap is positioned such that the point `px,py` on the source is at the offset `ox,oy` on the destination.
+    // # *
+    // # * The `angle` is clockwise, in radians. The bitmap is also scaled by the factor `scale`.
+    // #
+    // # void bm_rotate_blit(Bitmap *dst, int ox, int oy, Bitmap *src, int px, int py, double angle, double scale);
+
+
+    // #     /*
+    // #    Reference:
+    // #    "Fast Bitmap Rotation and Scaling" By Steven Mortimer, Dr Dobbs' Journal, July 01, 2001
+    // #    http://www.drdobbs.com/architecture-and-design/fast-bitmap-rotation-and-scaling/184416337
+    // #    See also http://www.efg2.com/Lab/ImageProcessing/RotateScanline.htm
+    // #    */
+
+
     if (self->read_only) {
         mp_raise_RuntimeError(translate("Read-only object"));
     }
