@@ -582,7 +582,7 @@ msgstr ""
 msgid "Cannot create a new Adapter; use _bleio.adapter;"
 msgstr ""
 
-#: shared-bindings/displayio/Bitmap 2.c shared-bindings/displayio/Bitmap.c
+#: shared-bindings/displayio/Bitmap.c
 #: shared-bindings/memorymonitor/AllocationSize.c
 #: shared-bindings/pulseio/PulseIn.c
 msgid "Cannot delete values"
@@ -1940,8 +1940,8 @@ msgstr ""
 msgid "Slice and value different lengths."
 msgstr ""
 
-#: shared-bindings/displayio/Bitmap 2.c shared-bindings/displayio/Bitmap.c
-#: shared-bindings/displayio/Group.c shared-bindings/displayio/TileGrid.c
+#: shared-bindings/displayio/Bitmap.c shared-bindings/displayio/Group.c
+#: shared-bindings/displayio/TileGrid.c
 #: shared-bindings/memorymonitor/AllocationSize.c
 #: shared-bindings/pulseio/PulseIn.c
 msgid "Slices not supported"
@@ -3561,11 +3561,11 @@ msgstr ""
 msgid "ord() expected a character, but string of length %d found"
 msgstr ""
 
-#: shared-bindings/displayio/Bitmap 2.c shared-bindings/displayio/Bitmap.c
+#: shared-bindings/displayio/Bitmap.c
 msgid "out of range of source"
 msgstr ""
 
-#: shared-bindings/displayio/Bitmap 2.c shared-bindings/displayio/Bitmap.c
+#: shared-bindings/displayio/Bitmap.c
 msgid "out of range of target"
 msgstr ""
 
@@ -3598,11 +3598,11 @@ msgstr ""
 msgid "parameters must be registers in sequence r0 to r3"
 msgstr ""
 
-#: shared-bindings/displayio/Bitmap 2.c shared-bindings/displayio/Bitmap.c
+#: shared-bindings/displayio/Bitmap.c
 msgid "pixel coordinates out of bounds"
 msgstr ""
 
-#: shared-bindings/displayio/Bitmap 2.c shared-bindings/displayio/Bitmap.c
+#: shared-bindings/displayio/Bitmap.c
 msgid "pixel value requires too many bits"
 msgstr ""
 
@@ -3801,7 +3801,7 @@ msgstr ""
 msgid "sosfilt requires iterable arguments"
 msgstr ""
 
-#: shared-bindings/displayio/Bitmap 2.c shared-bindings/displayio/Bitmap.c
+#: shared-bindings/displayio/Bitmap.c
 msgid "source palette too large"
 msgstr ""
 
@@ -4066,7 +4066,7 @@ msgstr ""
 msgid "value must fit in %d byte(s)"
 msgstr ""
 
-#: shared-bindings/displayio/Bitmap 2.c shared-bindings/displayio/Bitmap.c
+#: shared-bindings/displayio/Bitmap.c
 msgid "value_count must be > 0"
 msgstr ""
 
