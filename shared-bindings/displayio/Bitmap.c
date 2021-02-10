@@ -292,19 +292,23 @@ MP_DEFINE_CONST_FUN_OBJ_KW(displayio_bitmap_blit_obj, 4, displayio_bitmap_obj_bl
 //|                       point (px,py) is placed
 //|         :param int oy: Vertical pixel location in destination bitmap where source bitmap
 //|                       point (px,py) is placed
-//|         :param Tuple[int x, int y] dest_clip0: First corner of rectangular destination clipping
+//|         :param dest_clip0: First corner of rectangular destination clipping
 //|                       region that constrains region of writing into destination bitmap
-//|         :param Tuple[int x, int y] dest_clip1: second corner of rectangular destination clipping
+//|         :type dest_clip0: Tuple[int,int]
+//|         :param dest_clip1: second corner of rectangular destination clipping
 //|                       region that constrains region of writing into destination bitmap
+//|         :type dest_clip1: Tuple[int,int]
 //|         :param bitmap source_bitmap: Source bitmap that contains the graphical region to be copied
 //|         :param int px: Horizontal pixel location in source bitmap that is placed into the
 //|                       destination bitmap at (ox,oy)
 //|         :param int py: Vertical pixel location in source bitmap that is placed into the
 //|                       destination bitmap at (ox,oy)
-//|         :param Tuple[int x, int y] source_clip0: First corner of rectangular destination clipping
+//|         :param source_clip0: First corner of rectangular destination clipping
 //|                       region that constrains region of writing into destination bitmap
-//|         :param Tuple[int x, int y] source_clip1: second corner of rectangular destination clipping
+//|         :type source_clip0: Tuple[int,int]
+//|         :param source_clip1: second corner of rectangular destination clipping
 //|                       region that constrains region of writing into destination bitmap
+//|         :type source_clip1: Tuple[int,int]
 //|         :param float angle: angle of rotation, in radians (positive is clockwise direction)
 //|         :param float scale: scaling factor
 //|         :param int skip_index: bitmap palette index in the source that will not be copied,
