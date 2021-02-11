@@ -43,7 +43,7 @@ void common_hal_displayio_bitmap_set_pixel(displayio_bitmap_t *bitmap, int16_t x
 void common_hal_displayio_bitmap_blit(displayio_bitmap_t *self, int16_t x, int16_t y, displayio_bitmap_t *source,
                                         int16_t x1, int16_t y1, int16_t x2, int16_t y2,
                                         uint32_t skip_index, bool skip_index_none);
-void common_hal_displayio_bitmap_blitfancy(displayio_bitmap_t *self, int16_t ox, int16_t oy,
+void common_hal_displayio_bitmap_fancyblit(displayio_bitmap_t *self, int16_t ox, int16_t oy,
                                             int16_t dest_clip0_x, int16_t dest_clip0_y,
                                             int16_t dest_clip1_x, int16_t dest_clip1_y,
                                             displayio_bitmap_t *source, int16_t px, int16_t py,

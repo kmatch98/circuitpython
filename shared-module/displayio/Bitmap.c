@@ -133,7 +133,7 @@ void common_hal_displayio_bitmap_blit(displayio_bitmap_t *self, int16_t x, int16
     }
 }
 
-void common_hal_displayio_bitmap_blitfancy(displayio_bitmap_t *self, int16_t ox, int16_t oy,
+void common_hal_displayio_bitmap_fancyblit(displayio_bitmap_t *self, int16_t ox, int16_t oy,
                                             int16_t dest_clip0_x, int16_t dest_clip0_y,
                                             int16_t dest_clip1_x, int16_t dest_clip1_y,
                                             displayio_bitmap_t *source, int16_t px, int16_t py,
