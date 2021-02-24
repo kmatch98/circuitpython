@@ -274,7 +274,7 @@ STATIC mp_obj_t displayio_bitmap_obj_blit(size_t n_args, const mp_obj_t *pos_arg
 MP_DEFINE_CONST_FUN_OBJ_KW(displayio_bitmap_blit_obj, 4, displayio_bitmap_obj_blit);
 // `displayio_bitmap_obj_blit` requires at least 4 arguments
 
-
+/*
 STATIC int16_t validate_point(mp_obj_t point, int16_t default_value) {
     // Checks if point is None and returns default_value, otherwise decodes integer value
     if ( point == mp_const_none ) {
@@ -349,8 +349,8 @@ STATIC void validate_clip_region(displayio_bitmap_t *bitmap, mp_obj_t clip0_tupl
 
 }
 
-/////////  Adding a fancy blit function with rotation, scaling and clipping (both source and destination)
-//|     def fancyblit(self, ox: int, oy: int,
+/////////  A fancy blit "rotozoom" function with rotation, scaling and clipping (both source and destination)
+//|     def rotozoom(self, ox: int, oy: int,
 //|                       dest_clip0: Tuple[int, int],
 //|                       dest_clip1: Tuple[int, int],
 //|                       source_bitmap: Bitmap,
@@ -390,7 +390,7 @@ STATIC void validate_clip_region(displayio_bitmap_t *bitmap, mp_obj_t clip0_tupl
 //|                                set to None to copy all pixels"""
 //|         ...
 //|
-STATIC mp_obj_t displayio_bitmap_obj_fancyblit(size_t n_args, const mp_obj_t *pos_args, mp_map_t *kw_args){
+STATIC mp_obj_t displayio_bitmap_obj_rotozoom(size_t n_args, const mp_obj_t *pos_args, mp_map_t *kw_args){
     enum {ARG_ox, ARG_oy, ARG_dest_clip0, ARG_dest_clip1,
         ARG_source_bitmap, ARG_px, ARG_py,
         ARG_source_clip0, ARG_source_clip1,
@@ -472,7 +472,7 @@ STATIC mp_obj_t displayio_bitmap_obj_fancyblit(size_t n_args, const mp_obj_t *po
         skip_index_none = false;
     }
 
-    common_hal_displayio_bitmap_fancyblit(self, ox, oy,
+    common_hal_displayio_bitmap_rotozoom(self, ox, oy,
                                             dest_clip0_x, dest_clip0_y,
                                             dest_clip1_x, dest_clip1_y,
                                             source, px, py,
@@ -485,8 +485,10 @@ STATIC mp_obj_t displayio_bitmap_obj_fancyblit(size_t n_args, const mp_obj_t *po
     return mp_const_none;
 }
 
-MP_DEFINE_CONST_FUN_OBJ_KW(displayio_bitmap_fancyblit_obj, 1, displayio_bitmap_obj_fancyblit);
+MP_DEFINE_CONST_FUN_OBJ_KW(displayio_bitmap_rotozoom_obj, 1, displayio_bitmap_obj_rotozoom);
 // requires at least 2 arguments (destination and source bitmaps)
+*/
+
 
 //|     def fill(self, value: int) -> None:
 //|         """Fills the bitmap with the supplied palette index value."""
@@ -509,7 +511,7 @@ STATIC const mp_rom_map_elem_t displayio_bitmap_locals_dict_table[] = {
     { MP_ROM_QSTR(MP_QSTR_height), MP_ROM_PTR(&displayio_bitmap_height_obj) },
     { MP_ROM_QSTR(MP_QSTR_width), MP_ROM_PTR(&displayio_bitmap_width_obj) },
     { MP_ROM_QSTR(MP_QSTR_blit), MP_ROM_PTR(&displayio_bitmap_blit_obj) },
-    { MP_ROM_QSTR(MP_QSTR_fancyblit), MP_ROM_PTR(&displayio_bitmap_fancyblit_obj) },
+//    { MP_ROM_QSTR(MP_QSTR_rotozoom), MP_ROM_PTR(&displayio_bitmap_rotozoom_obj) },
     { MP_ROM_QSTR(MP_QSTR_fill), MP_ROM_PTR(&displayio_bitmap_fill_obj) },
 
 };

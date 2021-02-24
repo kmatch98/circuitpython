@@ -133,7 +133,8 @@ void common_hal_displayio_bitmap_blit(displayio_bitmap_t *self, int16_t x, int16
     }
 }
 
-void common_hal_displayio_bitmap_fancyblit(displayio_bitmap_t *self, int16_t ox, int16_t oy,
+/*
+void common_hal_displayio_bitmap_rotozoom(displayio_bitmap_t *self, int16_t ox, int16_t oy,
                                             int16_t dest_clip0_x, int16_t dest_clip0_y,
                                             int16_t dest_clip1_x, int16_t dest_clip1_y,
                                             displayio_bitmap_t *source, int16_t px, int16_t py,
@@ -143,6 +144,9 @@ void common_hal_displayio_bitmap_fancyblit(displayio_bitmap_t *self, int16_t ox,
                                             float scale,
                                             uint32_t skip_index, bool skip_index_none) {
 
+    // Copies region from source to the destination bitmap, including rotation,
+    // scaling and clipping of either the source or destination regions
+    //
     // *self: destination bitmap
     // ox: the (ox, oy) destination point where the source (px,py) point is placed
     // oy:
@@ -182,12 +186,12 @@ void common_hal_displayio_bitmap_fancyblit(displayio_bitmap_t *self, int16_t ox,
     // # void bm_rotate_blit(Bitmap *dst, int ox, int oy, Bitmap *src, int px, int py, double angle, double scale);
 
 
-    // #     /*
+    // #
     // #    Reference:
     // #    "Fast Bitmap Rotation and Scaling" By Steven Mortimer, Dr Dobbs' Journal, July 01, 2001
     // #    http://www.drdobbs.com/architecture-and-design/fast-bitmap-rotation-and-scaling/184416337
     // #    See also http://www.efg2.com/Lab/ImageProcessing/RotateScanline.htm
-    // #    */
+    // #
 
 
     if (self->read_only) {
@@ -206,8 +210,8 @@ void common_hal_displayio_bitmap_fancyblit(displayio_bitmap_t *self, int16_t ox,
 
     float dx, dy;
 
-    /* Compute the position of where each corner on the source bitmap
-    will be on the destination to get a bounding box for scanning */
+    // Compute the position of where each corner on the source bitmap
+    // will be on the destination to get a bounding box for scanning
     dx = -cosAngle * px * scale + sinAngle * py * scale + ox;
     dy = -sinAngle * px * scale - cosAngle * py * scale + oy;
     if(dx < minx) minx = (int16_t)dx;
@@ -236,7 +240,7 @@ void common_hal_displayio_bitmap_fancyblit(displayio_bitmap_t *self, int16_t ox,
     if(dy < miny) miny = (int16_t)dy;
     if(dy > maxy) maxy = (int16_t)dy;
 
-    /* Clipping */
+    // Clipping
     if(minx < dest_clip0_x) minx = dest_clip0_x;
     if(maxx > dest_clip1_x - 1) maxx = dest_clip1_x - 1;
     if(miny < dest_clip0_y) miny = dest_clip0_y;
@@ -271,6 +275,7 @@ void common_hal_displayio_bitmap_fancyblit(displayio_bitmap_t *self, int16_t ox,
         rowv += dvCol;
     }
 }
+*/
 
 void common_hal_displayio_bitmap_set_pixel(displayio_bitmap_t *self, int16_t x, int16_t y, uint32_t value) {
     if (self->read_only) {
