@@ -139,8 +139,8 @@ endif
 ifeq ($(CIRCUITPY_BITBANG_APA102),1)
 SRC_PATTERNS += bitbangio/SPI%
 endif
-ifeq ($(CIRCUITPY_BITOPS),1)
-SRC_PATTERNS += bitops/%
+ifeq ($(CIRCUITPY_BITMAPTOOLS),1)
+SRC_PATTERNS += bitmaptools/%
 endif
 ifeq ($(CIRCUITPY_BLEIO),1)
 SRC_PATTERNS += _bleio/%
@@ -288,9 +288,6 @@ SRC_PATTERNS += touchio/%
 endif
 ifeq ($(CIRCUITPY_UHEAP),1)
 SRC_PATTERNS += uheap/%
-endif
-ifeq ($(CIRCUITPY_USB_CDC),1)
-SRC_PATTERNS += usb_cdc/%
 endif
 ifeq ($(CIRCUITPY_USB_HID),1)
 SRC_PATTERNS += usb_hid/%
@@ -472,7 +469,7 @@ SRC_SHARED_MODULE_ALL = \
 	bitbangio/OneWire.c \
 	bitbangio/SPI.c \
 	bitbangio/__init__.c \
-	bitops/__init__.c \
+	bitmaptools/__init__.c \
 	board/__init__.c \
 	adafruit_bus_device/__init__.c \
 	adafruit_bus_device/I2CDevice.c \
