@@ -139,6 +139,9 @@ endif
 ifeq ($(CIRCUITPY_BITBANG_APA102),1)
 SRC_PATTERNS += bitbangio/SPI%
 endif
+ifeq ($(CIRCUITPY_BITMAPTOOLS),1)
+SRC_PATTERNS += bitmaptools/%
+endif
 ifeq ($(CIRCUITPY_BLEIO),1)
 SRC_PATTERNS += _bleio/%
 endif
@@ -466,6 +469,7 @@ SRC_SHARED_MODULE_ALL = \
 	bitbangio/OneWire.c \
 	bitbangio/SPI.c \
 	bitbangio/__init__.c \
+	bitmaptools/__init__.c \
 	board/__init__.c \
 	adafruit_bus_device/__init__.c \
 	adafruit_bus_device/I2CDevice.c \
