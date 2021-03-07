@@ -102,6 +102,7 @@ msgstr ""
 msgid "%q must be a tuple of length 2"
 msgstr ""
 
+#: ports/raspberrypi/common-hal/rp2pio/StateMachine 2.c
 #: ports/raspberrypi/common-hal/rp2pio/StateMachine.c
 #: shared-bindings/canio/Match.c
 msgid "%q out of range"
@@ -341,6 +342,7 @@ msgstr ""
 msgid "All event channels in use"
 msgstr ""
 
+#: ports/raspberrypi/common-hal/rp2pio/StateMachine 2.c
 #: ports/raspberrypi/common-hal/rp2pio/StateMachine.c
 msgid "All state machines in use"
 msgstr ""
@@ -500,6 +502,7 @@ msgstr ""
 msgid "Buffer + offset too small %d %d %d"
 msgstr ""
 
+#: ports/raspberrypi/bindings/rp2pio/StateMachine 2.c
 #: ports/raspberrypi/bindings/rp2pio/StateMachine.c
 msgid "Buffer elements must be 4 bytes long or less"
 msgstr ""
@@ -884,6 +887,7 @@ msgstr ""
 msgid "Error: Failure to bind"
 msgstr ""
 
+#: ports/raspberrypi/bindings/rp2pio/StateMachine 2.c
 #: ports/raspberrypi/bindings/rp2pio/StateMachine.c py/enum.c
 #: shared-bindings/_bleio/__init__.c shared-bindings/aesio/aes.c
 #: shared-bindings/busio/SPI.c shared-bindings/microcontroller/Pin.c
@@ -922,7 +926,7 @@ msgstr ""
 msgid "Expected an alarm"
 msgstr ""
 
-#: shared-module/_pixelbuf/PixelBuf.c
+#: shared-module/_pixelbuf/PixelBuf 2.c shared-module/_pixelbuf/PixelBuf.c
 #, c-format
 msgid "Expected tuple of length %d, got %d"
 msgstr ""
@@ -1042,10 +1046,6 @@ msgstr ""
 msgid "Group already used"
 msgstr ""
 
-#: shared-module/displayio/Group.c
-msgid "Group full"
-msgstr ""
-
 #: ports/mimxrt10xx/common-hal/busio/SPI.c ports/stm/common-hal/busio/I2C.c
 #: ports/stm/common-hal/busio/SPI.c ports/stm/common-hal/canio/CAN.c
 #: ports/stm/common-hal/sdioio/SDCard.c
@@ -1085,6 +1085,10 @@ msgstr ""
 msgid "IV must be %d bytes long"
 msgstr ""
 
+#: ports/raspberrypi/bindings/rp2pio/StateMachine 2.c
+msgid "In buffer elements must be 4 bytes long or less"
+msgstr ""
+
 #: ports/raspberrypi/bindings/rp2pio/StateMachine.c
 msgid "In-buffer elements must be <= 4 bytes long"
 msgstr ""
@@ -1099,14 +1103,20 @@ msgstr ""
 msgid "Incorrect buffer size"
 msgstr ""
 
+#: ports/raspberrypi/bindings/rp2pio/StateMachine 2.c
 #: ports/raspberrypi/bindings/rp2pio/StateMachine.c
 msgid "Init program size invalid"
+msgstr ""
+
+#: ports/raspberrypi/common-hal/rp2pio/StateMachine 2.c
+msgid "Initial set pin direcion conflicts with initial out pin direction"
 msgstr ""
 
 #: ports/raspberrypi/common-hal/rp2pio/StateMachine.c
 msgid "Initial set pin direction conflicts with initial out pin direction"
 msgstr ""
 
+#: ports/raspberrypi/common-hal/rp2pio/StateMachine 2.c
 #: ports/raspberrypi/common-hal/rp2pio/StateMachine.c
 msgid "Initial set pin state conflicts with initial out pin state"
 msgstr ""
@@ -1128,26 +1138,31 @@ msgstr ""
 msgid "Input/output error"
 msgstr ""
 
+#: ports/raspberrypi/common-hal/rp2pio/StateMachine 2.c
 #: ports/raspberrypi/common-hal/rp2pio/StateMachine.c
 #, c-format
 msgid "Instruction %d jumps on pin"
 msgstr ""
 
+#: ports/raspberrypi/common-hal/rp2pio/StateMachine 2.c
 #: ports/raspberrypi/common-hal/rp2pio/StateMachine.c
 #, c-format
 msgid "Instruction %d shifts in more bits than pin count"
 msgstr ""
 
+#: ports/raspberrypi/common-hal/rp2pio/StateMachine 2.c
 #: ports/raspberrypi/common-hal/rp2pio/StateMachine.c
 #, c-format
 msgid "Instruction %d shifts out more bits than pin count"
 msgstr ""
 
+#: ports/raspberrypi/common-hal/rp2pio/StateMachine 2.c
 #: ports/raspberrypi/common-hal/rp2pio/StateMachine.c
 #, c-format
 msgid "Instruction %d uses extra pin"
 msgstr ""
 
+#: ports/raspberrypi/common-hal/rp2pio/StateMachine 2.c
 #: ports/raspberrypi/common-hal/rp2pio/StateMachine.c
 #, c-format
 msgid "Instruction %d waits on input outside of count"
@@ -1415,31 +1430,37 @@ msgstr ""
 msgid "Missing MISO or MOSI Pin"
 msgstr ""
 
+#: ports/raspberrypi/common-hal/rp2pio/StateMachine 2.c
 #: ports/raspberrypi/common-hal/rp2pio/StateMachine.c
 #, c-format
 msgid "Missing first_in_pin. Instruction %d reads pin(s)"
 msgstr ""
 
+#: ports/raspberrypi/common-hal/rp2pio/StateMachine 2.c
 #: ports/raspberrypi/common-hal/rp2pio/StateMachine.c
 #, c-format
 msgid "Missing first_in_pin. Instruction %d shifts in from pin(s)"
 msgstr ""
 
+#: ports/raspberrypi/common-hal/rp2pio/StateMachine 2.c
 #: ports/raspberrypi/common-hal/rp2pio/StateMachine.c
 #, c-format
 msgid "Missing first_in_pin. Instruction %d waits based on pin"
 msgstr ""
 
+#: ports/raspberrypi/common-hal/rp2pio/StateMachine 2.c
 #: ports/raspberrypi/common-hal/rp2pio/StateMachine.c
 #, c-format
 msgid "Missing first_out_pin. Instruction %d shifts out to pin(s)"
 msgstr ""
 
+#: ports/raspberrypi/common-hal/rp2pio/StateMachine 2.c
 #: ports/raspberrypi/common-hal/rp2pio/StateMachine.c
 #, c-format
 msgid "Missing first_out_pin. Instruction %d writes pin(s)"
 msgstr ""
 
+#: ports/raspberrypi/common-hal/rp2pio/StateMachine 2.c
 #: ports/raspberrypi/common-hal/rp2pio/StateMachine.c
 #, c-format
 msgid "Missing first_set_pin. Instruction %d sets pin(s)"
@@ -1544,10 +1565,12 @@ msgstr ""
 msgid "No hardware support on pin"
 msgstr ""
 
+#: ports/raspberrypi/common-hal/rp2pio/StateMachine 2.c
 #: ports/raspberrypi/common-hal/rp2pio/StateMachine.c
 msgid "No in in program"
 msgstr ""
 
+#: ports/raspberrypi/common-hal/rp2pio/StateMachine 2.c
 #: ports/raspberrypi/common-hal/rp2pio/StateMachine.c
 msgid "No in or out in program"
 msgstr ""
@@ -1576,6 +1599,7 @@ msgstr ""
 msgid "No network with that ssid"
 msgstr ""
 
+#: ports/raspberrypi/common-hal/rp2pio/StateMachine 2.c
 #: ports/raspberrypi/common-hal/rp2pio/StateMachine.c
 msgid "No out in program"
 msgstr ""
@@ -1687,6 +1711,10 @@ msgstr ""
 msgid "Operation timed out"
 msgstr ""
 
+#: ports/raspberrypi/bindings/rp2pio/StateMachine 2.c
+msgid "Out buffer elements must be 4 bytes long or less"
+msgstr ""
+
 #: ports/esp32s2/bindings/espidf/__init__.c ports/esp32s2/esp_error.c
 msgid "Out of memory"
 msgstr ""
@@ -1744,10 +1772,12 @@ msgstr ""
 msgid "Permission denied"
 msgstr ""
 
+#: ports/raspberrypi/bindings/rp2pio/StateMachine 2.c
 #: ports/raspberrypi/bindings/rp2pio/StateMachine.c
 msgid "Pin count must be at least 1"
 msgstr ""
 
+#: ports/raspberrypi/common-hal/rp2pio/StateMachine 2.c
 #: ports/raspberrypi/common-hal/rp2pio/StateMachine.c
 msgid "Pin count too large"
 msgstr ""
@@ -1826,22 +1856,27 @@ msgstr ""
 msgid "Pretending to deep sleep until alarm, CTRL-C or file write.\n"
 msgstr ""
 
+#: ports/raspberrypi/common-hal/rp2pio/StateMachine 2.c
 #: ports/raspberrypi/common-hal/rp2pio/StateMachine.c
 msgid "Program does IN without loading ISR"
 msgstr ""
 
+#: ports/raspberrypi/common-hal/rp2pio/StateMachine 2.c
 #: ports/raspberrypi/common-hal/rp2pio/StateMachine.c
 msgid "Program does OUT without loading OSR"
 msgstr ""
 
+#: ports/raspberrypi/bindings/rp2pio/StateMachine 2.c
 #: ports/raspberrypi/bindings/rp2pio/StateMachine.c
 msgid "Program must contain at least one 16-bit instruction."
 msgstr ""
 
+#: ports/raspberrypi/bindings/rp2pio/StateMachine 2.c
 #: ports/raspberrypi/bindings/rp2pio/StateMachine.c
 msgid "Program size invalid"
 msgstr ""
 
+#: ports/raspberrypi/bindings/rp2pio/StateMachine 2.c
 #: ports/raspberrypi/bindings/rp2pio/StateMachine.c
 msgid "Program too large"
 msgstr ""
@@ -1991,10 +2026,12 @@ msgstr ""
 msgid "Server side context cannot have hostname"
 msgstr ""
 
+#: ports/raspberrypi/bindings/rp2pio/StateMachine 2.c
 #: ports/raspberrypi/bindings/rp2pio/StateMachine.c
 msgid "Set pin count must be between 1 and 5"
 msgstr ""
 
+#: ports/raspberrypi/bindings/rp2pio/StateMachine 2.c
 #: ports/raspberrypi/bindings/rp2pio/StateMachine.c
 msgid "Side set pin count must be between 1 and 5"
 msgstr ""
@@ -2598,7 +2635,7 @@ msgid "can't assign to expression"
 msgstr ""
 
 #: py/obj.c py/objint.c shared-bindings/i2cperipheral/I2CPeripheral.c
-#: shared-module/_pixelbuf/PixelBuf.c
+#: shared-module/_pixelbuf/PixelBuf 2.c shared-module/_pixelbuf/PixelBuf.c
 msgid "can't convert %q to %q"
 msgstr ""
 
@@ -3743,10 +3780,12 @@ msgstr ""
 msgid "pressing both buttons at start up.\n"
 msgstr ""
 
+#: ports/raspberrypi/bindings/rp2pio/StateMachine 2.c
 #: ports/raspberrypi/bindings/rp2pio/StateMachine.c
 msgid "pull_threshold must be between 1 and 32"
 msgstr ""
 
+#: ports/raspberrypi/bindings/rp2pio/StateMachine 2.c
 #: ports/raspberrypi/bindings/rp2pio/StateMachine.c
 msgid "push_threshold must be between 1 and 32"
 msgstr ""
