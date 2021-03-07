@@ -150,30 +150,49 @@ void common_hal_displayio_bitmap_blit(displayio_bitmap_t *self, int16_t x, int16
     }
 }
 
-void common_hal_displayio_bitmap_set_pixel(displayio_bitmap_t *self, int16_t x, int16_t y, uint32_t value) {
-    if (self->read_only) {
-        mp_raise_RuntimeError(translate("Read-only object"));
+void displayio_bitmap_set_dirty_area(displayio_bitmap_t *self, int16_t x1, int16_t y1, int16_t x2, int16_t y2) {
+    // Update the bitmap's dirty region with the rectangle bounded by (x1,y1) and (x2, y2)
+
+    // Arrange x1 < x2, y1 < y2
+    if (x1 > x2) {
+        int16_t temp = x1;
+        x1 = x2;
+        x2 = temp;
     }
+    if (y1 > y2) {
+        int16_t temp = y1;
+        y1 = y2;
+        y2 = temp;
+    }
+
     // Update the dirty area.
     if (self->dirty_area.x1 == self->dirty_area.x2) {
-        self->dirty_area.x1 = x;
-        self->dirty_area.x2 = x + 1;
-        self->dirty_area.y1 = y;
-        self->dirty_area.y2 = y + 1;
+        self->dirty_area.x1 = x1;
+        self->dirty_area.x2 = x2;
+        self->dirty_area.y1 = y1;
+        self->dirty_area.y2 = y2;
     } else {
-        if (x < self->dirty_area.x1) {
-            self->dirty_area.x1 = x;
-        } else if (x >= self->dirty_area.x2) {
-            self->dirty_area.x2 = x + 1;
+        if (x1 < self->dirty_area.x1) {
+            self->dirty_area.x1 = x1;
         }
-        if (y < self->dirty_area.y1) {
-            self->dirty_area.y1 = y;
-        } else if (y >= self->dirty_area.y2) {
-            self->dirty_area.y2 = y + 1;
+        if (x2 > self->dirty_area.x2) {
+            self->dirty_area.x2 = x2;
+        }
+        if (y1 < self->dirty_area.y1) {
+            self->dirty_area.y1 = y1;
+        }
+        if (y2 > self->dirty_area.y2) {
+            self->dirty_area.y2 = y2;
         }
     }
 
-    // Update our data
+}
+
+void displayio_bitmap_write_pixel(displayio_bitmap_t *self, int16_t x, int16_t y, uint32_t value) {
+    // Writes the color index value into a pixel position
+    // Must update the dirty area separately
+
+    // Update one pixel of data
     int32_t row_start = y * self->stride;
     uint32_t bytes_per_value = self->bits_per_value / 8;
     if (bytes_per_value < 1) {
@@ -193,6 +212,20 @@ void common_hal_displayio_bitmap_set_pixel(displayio_bitmap_t *self, int16_t x, 
             ((uint32_t*) row)[x] = value;
         }
     }
+
+}
+
+void common_hal_displayio_bitmap_set_pixel(displayio_bitmap_t *self, int16_t x, int16_t y, uint32_t value) {
+    if (self->read_only) {
+        mp_raise_RuntimeError(translate("Read-only object"));
+    }
+
+    // update the dirty region
+    displayio_bitmap_set_dirty_area(self, x, y, x+1, y+1);
+
+    // write the pixel
+    displayio_bitmap_write_pixel(self, x, y, value);
+
 }
 
 displayio_area_t* displayio_bitmap_get_refresh_areas(displayio_bitmap_t *self, displayio_area_t* tail) {
